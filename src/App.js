@@ -139,22 +139,23 @@ export default function App() {
 
   return (
     <div className="min-h-screen">
-     {/* Top Panel */}
+      {/* Top Panel */}
     <header className="fixed top-0 left-0 right-0 bg-green-primary text-white h-14 flex items-center px-4 shadow-lg z-20 justify-between">
       <div className="flex items-center">
-        <img src="/logo.png" alt="Logo" className="h-10 w-auto mr-3" />
+        <img src={`${process.env.PUBLIC_URL}/logo.png`} alt="Logo" className="h-10 w-auto mr-3" />
         <h1 className="text-2xl font-semibold">UNDIP GREEN MONITORING</h1>
-      </div> {/* ✅ This was missing */}
+      </div>
 
       {/* Right side: small logo and time */}
       <div className="flex items-center space-x-2 text-right text-sm leading-tight whitespace-pre">
-      <img src="/logo2.png" alt="Logo2" className="h-10 w-auto mr-0" />
-      <img src="/global.png" alt="globalLogo" className="h-10 w-22" />
-      <img src="/sdg.png" alt="sdgLogo" className="h-9 w-19" />
-        <img src="/ui.png" alt="greenmetricLogo" className="h-9 w-19" />
+        <img src={`${process.env.PUBLIC_URL}/logo2.png`} alt="Logo2" className="h-10 w-auto mr-0" />
+        <img src={`${process.env.PUBLIC_URL}/global.png`} alt="globalLogo" className="h-10 w-22" />
+        <img src={`${process.env.PUBLIC_URL}/sdg.png`} alt="sdgLogo" className="h-9 w-19" />
+        <img src={`${process.env.PUBLIC_URL}/ui.png`} alt="greenmetricLogo" className="h-9 w-19" />
         <div className="font-semibold">{currentDateTime}</div>
       </div>
     </header>
+
 
       {/* Sidebar */}
       <Sidebar
