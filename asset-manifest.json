@@ -1,13 +1,13 @@
 {
   "files": {
-    "main.css": "/GreenMonitoring/static/css/main.c8089297.css",
-    "main.js": "/GreenMonitoring/static/js/main.5fa43da7.js",
+    "main.css": "/GreenMonitoring/static/css/main.ed572fb6.css",
+    "main.js": "/GreenMonitoring/static/js/main.edb60092.js",
     "index.html": "/GreenMonitoring/index.html",
-    "main.c8089297.css.map": "/GreenMonitoring/static/css/main.c8089297.css.map",
-    "main.5fa43da7.js.map": "/GreenMonitoring/static/js/main.5fa43da7.js.map"
+    "main.ed572fb6.css.map": "/GreenMonitoring/static/css/main.ed572fb6.css.map",
+    "main.edb60092.js.map": "/GreenMonitoring/static/js/main.edb60092.js.map"
   },
   "entrypoints": [
-    "static/css/main.c8089297.css",
-    "static/js/main.5fa43da7.js"
+    "static/css/main.ed572fb6.css",
+    "static/js/main.edb60092.js"
   ]
 }
