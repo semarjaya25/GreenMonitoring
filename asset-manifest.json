@@ -1,0 +1,13 @@
+{
+  "files": {
+    "main.css": "/GreenMonitoring/static/css/main.c8089297.css",
+    "main.js": "/GreenMonitoring/static/js/main.df804674.js",
+    "index.html": "/GreenMonitoring/index.html",
+    "main.c8089297.css.map": "/GreenMonitoring/static/css/main.c8089297.css.map",
+    "main.df804674.js.map": "/GreenMonitoring/static/js/main.df804674.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.c8089297.css",
+    "static/js/main.df804674.js"
+  ]
+}
