@@ -6,19 +6,18 @@ import CardGrid from "./CardGrid";
 import ElectricityCharts from "./ElectricityCharts";
 import VehicleChartAndVideo from "./VehicleChartAndVideo";
 import StaticMap from "./StaticMap";
-import 'leaflet/dist/leaflet.css'; // ✅ Ensure this is here if not already
-
+import 'leaflet/dist/leaflet.css';
 
 const sidebarItems = ["ELECTRICITY", "CO2", "WATER", "VEHICLE COUNTER"];
 const itemLabels = {
   ELECTRICITY: "Realtime Parameters:",
   CO2: "CO₂ Emissions",
-  "WATER": "Water",
+  WATER: "Water",
   "VEHICLE COUNTER": "Vehicle Counter",
 };
 
-const electricityLocation = [-7.04877900415822, 110.43801488010942]; // Coordinates for Gedung Widya Puraya
-const vehicleCounterLocation = [-7.055920045981158, 110.43925653986874]; // Coordinates for Vehicle Counter (replace with your desired location)
+const electricityLocation = [-7.04877900415822, 110.43801488010942];
+const vehicleCounterLocation = [-7.055920045981158, 110.43925653986874];
 
 function formatDateToGMT7(isoString) {
   const date = new Date(isoString);
@@ -32,6 +31,23 @@ export default function App() {
   const [chartData, setChartData] = useState([]);
   const [dailyChartData, setDailyChartData] = useState([]);
   const [currentDateTime, setCurrentDateTime] = useState("");
+  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+
+  // Auto-collapse sidebar on small screens
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth >= 768) {
+        setIsSidebarOpen(true);
+      } else {
+        setIsSidebarOpen(false);
+      }
+    };
+
+    handleResize(); // Set on mount
+    window.addEventListener('resize', handleResize); // Optional: respond to resizes
+
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   // Live Date & Time
   useEffect(() => {
@@ -49,7 +65,7 @@ export default function App() {
       const timeStr = now.toLocaleTimeString("id-ID", {
         hour12: false,
         timeZone: "Asia/Jakarta",
-      }).replace(/\./g, ':');  // Replace dots with colons
+      }).replace(/\./g, ':');
       setCurrentDateTime(`${dateStr}\n${timeStr}`);
     };
 
@@ -111,7 +127,6 @@ export default function App() {
       }
     });
 
-    // For ELECTRICITY: also fetch daily power data
     let unsubscribeDaily = () => {};
     if (activeItem === "ELECTRICITY") {
       const dailyRef = ref(database, "charts/ELECTRICITY_DAILY_POWER");
@@ -138,62 +153,57 @@ export default function App() {
   }, [activeItem]);
 
   return (
-    <div className="min-h-screen">
-      {/* Top Panel */}
-    <header className="fixed top-0 left-0 right-0 bg-green-primary text-white h-14 flex items-center px-4 shadow-lg z-20 justify-between">
-      <div className="flex items-center">
-        <img src={`${process.env.PUBLIC_URL}/logo.png`} alt="Logo" className="h-10 w-auto mr-3" />
-        <h1 className="text-2xl font-semibold">UNDIP GREEN MONITORING</h1>
-      </div>
-
-      {/* Right side: small logo and time */}
-      <div className="flex items-center space-x-2 text-right text-sm leading-tight whitespace-pre">
-        <img src={`${process.env.PUBLIC_URL}/logo2.png`} alt="Logo2" className="h-10 w-auto mr-0" />
-        <img src={`${process.env.PUBLIC_URL}/global.png`} alt="globalLogo" className="h-10 w-22" />
-        <img src={`${process.env.PUBLIC_URL}/sdg.png`} alt="sdgLogo" className="h-9 w-19" />
-        <img src={`${process.env.PUBLIC_URL}/ui.png`} alt="greenmetricLogo" className="h-9 w-19" />
-        <div className="font-semibold">{currentDateTime}</div>
-      </div>
-    </header>
-
-
-      {/* Sidebar */}
+    <div className="flex min-h-screen">
       <Sidebar
         items={sidebarItems}
         activeItem={activeItem}
         onItemClick={setActiveItem}
       />
+      <div className="relative flex-1 transition-all duration-300 min-h-screen p-6 ml-[50px] md:ml-[200px]">
+     
 
-      {/* Main Content */}
-      <main className="ml-56 pt-14 bg-gray-100 min-h-screen overflow-y-auto p-6">
-        <h2 className="text-2xl font-semibold mb-4 mt-4">
-          {itemLabels[activeItem]}
-        </h2>
+        <main className="pt-0 bg-gray-100 min-h-screen">
+          <header className="fixed top-0 left-0 right-0 bg-green-primary text-white h-14 flex items-center px-4 shadow-lg z-20 justify-between">
+            <div className="flex items-center">
+              <img src={`${process.env.PUBLIC_URL}/logo.png`} alt="Logo" className="h-10 w-auto mr-3" />
+              <h1 className="text-xs sm:text-md md:text-2xl lg:text-2xl font-semibold">
+                UNDIP GREEN MONITORING
+              </h1>
+            </div>
 
-        {/* Card Grid */}
-        <CardGrid data={cardData} isVehicle={activeItem === "VEHICLE COUNTER"} activeItem={activeItem} />
+            <div className="flex items-center space-x-2 text-right text-sm leading-tight whitespace-pre">
+              <img src={`${process.env.PUBLIC_URL}/logo2.png`} alt="Logo2" className="h-10 w-auto mr-0" />
+              <img src={`${process.env.PUBLIC_URL}/global.png`} alt="globalLogo" className="h-10 w-22" />
+              <img src={`${process.env.PUBLIC_URL}/sdg.png`} alt="sdgLogo" className="h-9 w-19" />
+              <img src={`${process.env.PUBLIC_URL}/ui.png`} alt="greenmetricLogo" className="h-9 w-19" />
+              <div className="font-semibold">{currentDateTime}</div>
+            </div>
+          </header>
 
+          <h2 className="text-2xl font-semibold mb-4 mt-10">
+            {itemLabels[activeItem]}
+          </h2>
 
-        {/* Electricity Charts */}
-        {activeItem === "ELECTRICITY" && (
-          <>
-            <ElectricityCharts
-              chartData={chartData}
-              dailyChartData={dailyChartData}
-            />
-           <StaticMap position={electricityLocation} label="Sensor Location" />
-          </>
-        )}
+          <CardGrid data={cardData} isVehicle={activeItem === "VEHICLE COUNTER"} activeItem={activeItem} />
 
+          {activeItem === "ELECTRICITY" && (
+            <>
+              <ElectricityCharts
+                chartData={chartData}
+                dailyChartData={dailyChartData}
+              />
+              <StaticMap position={electricityLocation} label="Sensor Location" />
+            </>
+          )}
 
-        {/* Vehicle Counter Chart/Video */}
-        {activeItem === "VEHICLE COUNTER" && (
-          <section className="mt-8">
-            <VehicleChartAndVideo chartData={chartData} />
-            <StaticMap position={vehicleCounterLocation} label="Sensor Location" />
-          </section>
-        )}
-      </main>
+          {activeItem === "VEHICLE COUNTER" && (
+            <section className="mt-8">
+              <VehicleChartAndVideo chartData={chartData} />
+              <StaticMap position={vehicleCounterLocation} label="Sensor Location" />
+            </section>
+          )}
+        </main>
+      </div>
     </div>
   );
 }
