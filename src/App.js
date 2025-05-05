@@ -165,7 +165,7 @@ export default function App() {
         <main className="pt-0 bg-gray-100 min-h-screen">
           <header className="fixed top-0 left-0 right-0 bg-green-primary text-white h-14 flex items-center px-4 shadow-lg z-20 justify-between">
             <div className="flex items-center">
-              <img src={`${process.env.PUBLIC_URL}/logo.png`} alt="Logo" className="h-10 w-auto mr-3" />
+              <img src={`${process.env.PUBLIC_URL}/Logo.png`} alt="Logo" className="h-10 w-auto mr-3" />
               <h1 className="text-xs sm:text-md md:text-2xl lg:text-2xl font-semibold">
                 UNDIP GREEN MONITORING
               </h1>
