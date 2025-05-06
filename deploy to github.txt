@@ -1,0 +1,9 @@
+npm install --save gh-pages
+
+git init
+git remote add origin https://github.com/semarjaya25/GreenMonitoring.git
+
+git add .
+git commit -m "Fix logo paths for GitHub Pages"
+git push origin main
+npm run deploy
