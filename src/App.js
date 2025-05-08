@@ -33,7 +33,6 @@ export default function App() {
   const [currentDateTime, setCurrentDateTime] = useState("");
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
 
-  // Auto-collapse sidebar on small screens
   useEffect(() => {
     const handleResize = () => {
       if (window.innerWidth >= 768) {
@@ -42,14 +41,11 @@ export default function App() {
         setIsSidebarOpen(false);
       }
     };
-
-    handleResize(); // Set on mount
-    window.addEventListener('resize', handleResize); // Optional: respond to resizes
-
+    handleResize();
+    window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  // Live Date & Time
   useEffect(() => {
     const formatter = new Intl.DateTimeFormat("id-ID", {
       weekday: "long",
@@ -136,6 +132,7 @@ export default function App() {
           const formatted = data.map((item) => ({
             x: item.x,
             y1: parseFloat(item.y1).toFixed(3),
+            y2: item.y2 !== undefined ? parseFloat(item.y2).toFixed(3) : null,
           }));
           setDailyChartData(formatted);
         } else {
@@ -160,8 +157,6 @@ export default function App() {
         onItemClick={setActiveItem}
       />
       <div className="relative flex-1 transition-all duration-300 min-h-screen p-6 ml-[50px] md:ml-[200px]">
-     
-
         <main className="pt-0 bg-gray-100 min-h-screen">
           <header className="fixed top-0 left-0 right-0 bg-green-primary text-white h-14 flex items-center px-4 shadow-lg z-20 justify-between">
             <div className="flex items-center">

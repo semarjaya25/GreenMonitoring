@@ -21,7 +21,7 @@ import {
               <YAxis />
               <Tooltip />
               <Legend />
-              <Bar dataKey="y1" fill="#8884d8" name="Total Mobil" />
+              <Bar dataKey="y1" fill="#8884d8" name="Total" />
             </BarChart>
           </ResponsiveContainer>
         </div>
@@ -29,7 +29,7 @@ import {
         <div className="w-full h-[300px] md:h-[400px] lg:h-[480px] overflow-hidden">
           <iframe
             className="w-full h-full rounded-lg"
-            src="https://www.youtube.com/embed/I_Pp2NDDiPw?autoplay=1&mute=1"
+            src="http://www.youtube.com/embed/live_stream?channel=UCuF8iQlh1JCDIhqMW3-SBnw&autoplay=1"
             title="Vehicle Detection Stream"
             frameBorder="0"
             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"

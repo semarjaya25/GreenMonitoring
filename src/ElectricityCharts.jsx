@@ -18,14 +18,32 @@ export default function ElectricityCharts({ chartData, dailyChartData }) {
     <section className="flex flex-col gap-6">
       {/* First Chart */}
       <div className="bg-white p-6 rounded-xl shadow">
-        <h3 className="text-xl font-semibold mb-4">2025 Monthly Energy Cost (M Rp)</h3>
+        <h3 className="text-xl font-semibold mb-4">2025 Daily Energy Cost</h3>
         <ResponsiveContainer width="100%" height={300}>
           <BarChart data={chartData}>
             <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey="x" />
-            <YAxis />
+            <XAxis
+              dataKey="x"
+              label={{
+                value: "Time (Day)",
+                position: "insideTop",
+                offset: 22,
+              }}
+            />
+            <YAxis
+              label={{
+                value: "Million Rp",
+                angle: -90,
+                position: "insideLeft",
+                offset: 10,
+              }}
+            />
             <Tooltip />
-            <Legend />
+            <Legend 
+              verticalAlign="top" 
+              align="center" 
+              layout="horizontal" 
+            />
             <Bar dataKey="y1" fill="oklch(59.6% 0.145 163.225)" name="Maret" />
             <Bar dataKey="y2" fill="oklch(54.6% 0.245 262.881)" name="April" />
             <Bar dataKey="y3" fill="#ff7300" name="Mei" />
@@ -33,30 +51,58 @@ export default function ElectricityCharts({ chartData, dailyChartData }) {
         </ResponsiveContainer>
       </div>
 
-      {/* Second Chart: LineChart with Area and Smoothing */}
+      {/* Second Chart: Combined AreaChart for y1 and y2 */}
       <div className="bg-white p-6 rounded-xl shadow">
-        <h3 className="text-xl font-semibold mb-4">Hourly Power Usage (kW)</h3>
+        <h3 className="text-xl font-semibold mb-4">Hourly Active Power Usage</h3>
         <ResponsiveContainer width="100%" height={300}>
           <AreaChart data={dailyChartData}>
             <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey="x" />
-            <YAxis domain={[0, 150]} /> {/* Auto adjust Y-axis domain */}
+            <XAxis
+              dataKey="x"
+              label={{
+                value: "Time (Hour)",
+                position: "insideTop",
+                offset: 22,
+              }}
+            />
+            <YAxis
+              domain={[0, 150]}
+              label={{
+                value: "kiloWatt",
+                angle: -90,
+                position: "insideLeft",
+                offset: 10,
+              }}
+            />
             <Tooltip />
-            <Legend />
+            <Legend 
+              verticalAlign="top" 
+              align="center" 
+              layout="horizontal" 
+            />
             <Area
               type="basis"
               dataKey="y1"
               stroke="#4F46E5"
               fill="#4F46E520"
               strokeWidth={2}
-              name="Active Power"
+              name="Today"
+              dot={{ r: 3 }}
+              activeDot={{ r: 5 }}
+            />
+            <Area
+              type="basis"
+              dataKey="y2"
+              stroke="#EF4444"
+              fill="#EF444420"
+              strokeWidth={2}
+              name="Yesterday"
               dot={{ r: 3 }}
               activeDot={{ r: 5 }}
             />
           </AreaChart>
         </ResponsiveContainer>
       </div>
-
     </section>
   );
 }
