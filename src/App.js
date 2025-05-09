@@ -158,22 +158,33 @@ export default function App() {
       />
       <div className="relative flex-1 transition-all duration-300 min-h-screen p-6 ml-[50px] md:ml-[200px]">
         <main className="pt-0 bg-gray-100 min-h-screen">
-          <header className="fixed top-0 left-0 right-0 bg-green-primary text-white h-14 flex items-center px-4 shadow-lg z-20 justify-between">
-            <div className="flex items-center">
+        <header className="fixed top-0 left-0 right-0 bg-green-primary text-white h-14 flex items-center px-4 shadow-lg z-20 justify-between">
+          <div className="flex items-center">
+            <a href="https://undip.ac.id" target="_blank" rel="noopener noreferrer">
               <img src={`${process.env.PUBLIC_URL}/Logo.png`} alt="Logo" className="h-10 w-auto mr-3" />
-              <h1 className="text-xs sm:text-md md:text-2xl lg:text-2xl font-semibold">
-                UNDIP GREEN MONITORING
-              </h1>
-            </div>
+            </a>
+            <h1 className="text-xs sm:text-md md:text-2xl lg:text-2xl font-semibold">
+              UNDIP GREEN MONITORING
+            </h1>
+          </div>
 
-            <div className="flex items-center space-x-2 text-right text-sm leading-tight whitespace-pre">
+          <div className="flex items-center space-x-2 text-right text-sm leading-tight whitespace-pre">
+            <a href="https://undip.ac.id" target="_blank" rel="noopener noreferrer">
               <img src={`${process.env.PUBLIC_URL}/logo2.png`} alt="Logo2" className="h-10 w-auto mr-0" />
+            </a>
+            <a href="https://global.undip.ac.id" target="_blank" rel="noopener noreferrer">
               <img src={`${process.env.PUBLIC_URL}/global.png`} alt="globalLogo" className="h-10 w-22" />
+            </a>
+            <a href="https://sdgs.un.org/goals" target="_blank" rel="noopener noreferrer">
               <img src={`${process.env.PUBLIC_URL}/sdg.png`} alt="sdgLogo" className="h-9 w-19" />
+            </a>
+            <a href="https://greenmetric.ui.ac.id" target="_blank" rel="noopener noreferrer">
               <img src={`${process.env.PUBLIC_URL}/ui.png`} alt="greenmetricLogo" className="h-9 w-19" />
-              <div className="font-semibold">{currentDateTime}</div>
-            </div>
-          </header>
+            </a>
+            <div className="font-semibold">{currentDateTime}</div>
+          </div>
+        </header>
+
 
           <h2 className="text-2xl font-semibold mb-4 mt-10">
             {itemLabels[activeItem]}

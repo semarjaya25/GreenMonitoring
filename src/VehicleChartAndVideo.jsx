@@ -29,7 +29,7 @@ import {
         <div className="w-full h-[300px] md:h-[400px] lg:h-[480px] overflow-hidden">
           <iframe
             className="w-full h-full rounded-lg"
-            src="http://www.youtube.com/embed/live_stream?channel=UCuF8iQlh1JCDIhqMW3-SBnw&autoplay=1"
+            src="https://www.youtube.com/embed/live_stream?channel=UCuF8iQlh1JCDIhqMW3-SBnw&autoplay=1"
             title="Vehicle Detection Stream"
             frameBorder="0"
             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"

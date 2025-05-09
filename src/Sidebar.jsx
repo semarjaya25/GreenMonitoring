@@ -11,7 +11,7 @@ export default function Sidebar({ items, activeItem, onItemClick }) {
   return (
     <nav
       className="fixed top-14 left-0 bg-green-dark text-white space-y-2 pt-4 z-10
-                 w-14 md:w-48 h-[calc(100vh-3.5rem)] transition-all duration-300"
+                 w-14 md:w-52 h-[calc(100vh-3.5rem)] transition-all duration-300"
     >
       {items.map((item) => (
         <button
