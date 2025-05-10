@@ -44,9 +44,9 @@ export default function ElectricityCharts({ chartData, dailyChartData }) {
               align="center" 
               layout="horizontal" 
             />
-            <Bar dataKey="y1" fill="oklch(59.6% 0.145 163.225)" name="Maret" />
-            <Bar dataKey="y2" fill="oklch(54.6% 0.245 262.881)" name="April" />
-            <Bar dataKey="y3" fill="#ff7300" name="Mei" />
+            <Bar dataKey="y1" fill="#00d5be" name="Maret" />
+            <Bar dataKey="y2" fill="#51a2ff" name="April" />
+            <Bar dataKey="y3" fill="#fb64b6" name="Mei" />
           </BarChart>
         </ResponsiveContainer>
       </div>
