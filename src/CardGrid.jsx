@@ -1,3 +1,6 @@
+import React from "react";
+import AnimatedCard from "./AnimatedCard";
+
 export default function CardGrid({ data, isVehicle, activeItem }) {
   const isElectricity = activeItem === "ELECTRICITY";
   const isCO2 = activeItem === "CO2";
@@ -27,31 +30,17 @@ export default function CardGrid({ data, isVehicle, activeItem }) {
       } gap-6 mb-12`}
     >
       {data.map((card, index) => (
-        <article
+        <AnimatedCard
           key={index}
-          className={`p-4 rounded-xl shadow flex flex-col items-center justify-center min-h-[100px] border-t-4 ${colorClasses.border} ${
-            isCO2 && (index === 3 || index === 7 || index === 10 || index === 13) ? "bg-violet-100" : "bg-white"
-          }`}
-        >
-          <h3
-            className={`font-semibold mb-2 ${
-              isVehicle ? "text-lg mb-1" : "text-xs text-center"
-            }`}
-          >
-            {card.title}
-          </h3>
-          <p
-            className={`font-bold ${
-              (isElectricity && index === 0) || (isCO2 && (index === 0 || index === 4))
-                ? `text-xs ${colorClasses.text}`
-                : isVehicle
-                ? `text-xl text-blue-700`
-                : `text-xl ${colorClasses.text}`
-            }`}
-          >
-            {card.value}
-          </p>
-        </article>
+          title={card.title}
+          value={card.value}
+          index={index}
+          isVehicle={isVehicle}
+          isElectricity={isElectricity}
+          isCO2={isCO2}
+          colorClasses={colorClasses}
+          activeTab={activeItem} // Pass activeItem here
+        />
       ))}
     </section>
   );

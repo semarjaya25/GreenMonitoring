@@ -25,6 +25,7 @@ function formatDateToGMT7(isoString) {
   return gmt7.toISOString().replace("T", " ").substring(0, 19);
 }
 
+
 export default function App() {
   const [activeItem, setActiveItem] = useState("ELECTRICITY");
   const [cardData, setCardData] = useState([]);
