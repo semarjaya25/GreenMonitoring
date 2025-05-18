@@ -37,7 +37,7 @@ const AnimatedCard = ({ title, value, index, isVehicle, isElectricity, isCO2, co
     (isElectricity && index === 0) || (isCO2 && (index === 0 || index === 4))
       ? `text-xs ${colorClasses.text}`
       : isVehicle
-      ? `text-xl text-blue-700`
+      ? `text-xl ${colorClasses.text}`
       : `text-xl ${colorClasses.text}`;
 
   const gradientColor = animationColors[activeTab] || "rgba(33, 150, 243, 0.4)";

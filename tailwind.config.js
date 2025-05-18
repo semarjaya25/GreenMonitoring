@@ -14,7 +14,11 @@ module.exports = {
         "beige": "#F7F7F2",         // Light Beige/Off-White
         "yellow-accent": "#F3C30A", // Accent Yellow
       },
+      fontFamily: {
+        lcd: ['"Digital-7 Mono"', 'monospace'], // LCD 7-segment style font
+      },
     },
   },
+
   plugins: [],
 };

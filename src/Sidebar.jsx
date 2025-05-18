@@ -1,7 +1,8 @@
-import { Zap, Cloud, Droplet, Car } from 'lucide-react';
+import { Home, Zap, Cloud, Droplet, Car } from 'lucide-react';
 
 export default function Sidebar({ items, activeItem, onItemClick }) {
   const icons = {
+    OVERVIEW: <Home className="w-4 h-4 mr-2" />,
     ELECTRICITY: <Zap className="w-4 h-4 mr-2" />,
     CO2: <Cloud className="w-4 h-4 mr-2" />,
     WATER: <Droplet className="w-4 h-4 mr-2" />,

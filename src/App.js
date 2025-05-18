@@ -6,14 +6,17 @@ import CardGrid from "./CardGrid";
 import ElectricityCharts from "./ElectricityCharts";
 import VehicleChartAndVideo from "./VehicleChartAndVideo";
 import StaticMap from "./StaticMap";
+import CO2Chart from "./CO2Chart";
+import GaugeDisplay from "./GaugeDisplay";
 import 'leaflet/dist/leaflet.css';
 
-const sidebarItems = ["ELECTRICITY", "CO2", "WATER", "VEHICLE COUNTER"];
+const sidebarItems = ["OVERVIEW", "ELECTRICITY", "CO2", "WATER", "VEHICLE COUNTER"];
 const itemLabels = {
+  OVERVIEW: "",
   ELECTRICITY: "Realtime Parameters:",
-  CO2: "CO₂ Emissions",
-  WATER: "Water",
-  "VEHICLE COUNTER": "Vehicle Counter",
+  CO2: "Realtime Parameters:",
+  WATER: "Realtime Parameters:",
+  "VEHICLE COUNTER": "Realtime Parameters:",
 };
 
 const electricityLocation = [-7.04877900415822, 110.43801488010942];
@@ -25,26 +28,26 @@ function formatDateToGMT7(isoString) {
   return gmt7.toISOString().replace("T", " ").substring(0, 19);
 }
 
-
 export default function App() {
-  const [activeItem, setActiveItem] = useState("ELECTRICITY");
+  const [activeItem, setActiveItem] = useState("OVERVIEW"); // Set default active item to OVERVIEW
   const [cardData, setCardData] = useState([]);
   const [chartData, setChartData] = useState([]);
   const [dailyChartData, setDailyChartData] = useState([]);
   const [currentDateTime, setCurrentDateTime] = useState("");
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const [co2ValueForGauge, setCo2ValueForGauge] = useState(0);
+  const [powerForGauge, setPowerForGauge] = useState(null);
+  const [costForGauge, setCostForGauge] = useState(null);
+  const [vehicleCountForLCD, setVehicleCountForLCD] = useState(null);
+  
 
   useEffect(() => {
     const handleResize = () => {
-      if (window.innerWidth >= 768) {
-        setIsSidebarOpen(true);
-      } else {
-        setIsSidebarOpen(false);
-      }
+      setIsSidebarOpen(window.innerWidth >= 768);
     };
     handleResize();
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
   }, []);
 
   useEffect(() => {
@@ -71,7 +74,6 @@ export default function App() {
     return () => clearInterval(intervalId);
   }, []);
 
-  // Fetch card data
   useEffect(() => {
     const path = `cards/${activeItem.replace(" ", "_")}`;
     const dataRef = ref(database, path);
@@ -104,12 +106,15 @@ export default function App() {
     return () => unsubscribe();
   }, [activeItem]);
 
-  // Fetch chart data
-  useEffect(() => {
+useEffect(() => {
+  let unsubscribeMain = () => {};
+  let unsubscribeDaily = () => {};
+
+  if (activeItem === "ELECTRICITY") {
     const chartPath = `charts/${activeItem.replace(" ", "_")}`;
     const chartRef = ref(database, chartPath);
 
-    const unsubscribeMain = onValue(chartRef, (snapshot) => {
+    unsubscribeMain = onValue(chartRef, (snapshot) => {
       const data = snapshot.val();
       if (data) {
         const roundedData = data.map((item) => ({
@@ -117,6 +122,7 @@ export default function App() {
           y1: parseFloat(item.y1).toFixed(3),
           y2: parseFloat(item.y2).toFixed(3),
           y3: parseFloat(item.y3).toFixed(3),
+          y4: item.y4 !== undefined ? parseFloat(item.y4).toFixed(3) : undefined,
         }));
         setChartData(roundedData);
       } else {
@@ -124,31 +130,138 @@ export default function App() {
       }
     });
 
-    let unsubscribeDaily = () => {};
-    if (activeItem === "ELECTRICITY") {
-      const dailyRef = ref(database, "charts/ELECTRICITY_DAILY_POWER");
-      unsubscribeDaily = onValue(dailyRef, (snapshot) => {
-        const data = snapshot.val();
-        if (data) {
-          const formatted = data.map((item) => ({
-            x: item.x,
-            y1: parseFloat(item.y1).toFixed(3),
-            y2: item.y2 !== undefined ? parseFloat(item.y2).toFixed(3) : null,
-          }));
-          setDailyChartData(formatted);
-        } else {
-          setDailyChartData([]);
-        }
-      });
-    } else {
-      setDailyChartData([]);
-    }
+    const dailyRef = ref(database, "charts/ELECTRICITY_DAILY_POWER");
+    unsubscribeDaily = onValue(dailyRef, (snapshot) => {
+      const data = snapshot.val();
+      if (data) {
+        const formatted = data.map((item) => ({
+          x: item.x,
+          y1: parseFloat(item.y1).toFixed(3),
+          y2: item.y2 !== undefined ? parseFloat(item.y2).toFixed(3) : null,
+        }));
+        setDailyChartData(formatted);
+      } else {
+        setDailyChartData([]);
+      }
+    });
+  } else if (activeItem === "CO2") {
+    const dailyRef = ref(database, "charts/CO2_DAILY");
+    unsubscribeDaily = onValue(dailyRef, (snapshot) => {
+      const data = snapshot.val();
+      if (data) {
+        const formatted = data.map((item) => ({
+          x: item.x,
+          y1: parseFloat(item.y1).toFixed(3),
+          y2: item.y2 !== undefined ? parseFloat(item.y2).toFixed(3) : null,
+          y3: item.y3 !== undefined ? parseFloat(item.y3).toFixed(3) : null,
+          y4: item.y4 !== undefined ? parseFloat(item.y4).toFixed(3) : null,
+        }));
+        setDailyChartData(formatted);
+      } else {
+        setDailyChartData([]);
+      }
+    });
+  } else if (activeItem === "VEHICLE COUNTER") {
+    const dailyRef = ref(database, "charts/VEHICLE_DAILY_COUNT");
+    unsubscribeDaily = onValue(dailyRef, (snapshot) => {
+      const data = snapshot.val();
+      if (data) {
+        const formatted = data.map((item) => ({
+          x: item.x,
+          y1: parseFloat(item.y1).toFixed(3),
+          y2: item.y2 !== undefined ? parseFloat(item.y2).toFixed(3) : null,
+        }));
+        setDailyChartData(formatted);
+      } else {
+        setDailyChartData([]);
+      }
+    });
+  
+  } else {
+    setDailyChartData([]);
+    setChartData([]); // Optional: clear main chart data if not ELECTRICITY
+  }
 
-    return () => {
-      unsubscribeMain();
-      unsubscribeDaily();
-    };
-  }, [activeItem]);
+  return () => {
+    unsubscribeMain();
+    unsubscribeDaily();
+  };
+}, [activeItem]);
+
+//Data Fetch for OVERVIEW page
+ useEffect(() => {
+  if (activeItem !== "OVERVIEW") return;
+
+  // Fetch CO₂ daily average data for analog meter display
+  const co2Ref = ref(database, `cards/CO2/card25`);
+  const unsubscribeCO2 = onValue(co2Ref, (snapshot) => {
+    const row = snapshot.val();
+    if (!row) return;
+    const secondValue = row.value ?? row.value2 ?? null;
+    if (secondValue !== null) {
+      const numericValue = parseFloat(secondValue);
+      if (!isNaN(numericValue)) {
+        setCo2ValueForGauge(numericValue);
+      }
+    }
+  });
+
+  // Fetch current Vehicle Count for lcd meter display
+  const vehicleCountRef = ref(database, `cards/VEHICLE_COUNTER/card02`);
+  const unsubscribeVehicleCount = onValue(vehicleCountRef, (snapshot) => {
+    const row = snapshot.val();
+    if (!row) return;
+    const secondValue = row.value ?? row.value2 ?? null;
+    if (secondValue !== null) {
+      const numericValue = parseFloat(secondValue);
+      if (!isNaN(numericValue)) {
+        setVehicleCountForLCD(numericValue);
+      }
+    }
+  });
+  
+  const currentHour = new Date().getHours(); // Get current hour (0–23)
+
+  // Fetch Power data for current hour
+  const powerRef = ref(database, `charts/ELECTRICITY_DAILY_POWER/${currentHour}`);
+  const unsubscribePower = onValue(powerRef, (snapshot) => {
+    const row = snapshot.val();
+    if (!row) return;
+    const secondValue = row.y1 ?? row.value2 ?? null;
+    if (secondValue !== null) {
+      const numericValue = parseFloat(secondValue);
+      if (!isNaN(numericValue)) {
+        setPowerForGauge(numericValue);
+      }
+    }
+  });
+
+// Fetch Cost data for current date (offset -1)
+const today = new Date();
+const currentDate = today.getDate();        // e.g., 17
+const offsetDateKey = currentDate - 1;      // e.g., 16
+
+const costRef = ref(database, `charts/ELECTRICITY/${offsetDateKey}`);
+const unsubscribeCost = onValue(costRef, (snapshot) => {
+  const row = snapshot.val();
+  if (!row) return;
+
+  const secondValue = row.y3 ?? row.value2 ?? null;
+  if (secondValue !== null) {
+    const numericValue = parseFloat(secondValue);
+    if (!isNaN(numericValue)) {
+      setCostForGauge(numericValue);
+    }
+  }
+});
+
+  return () => {
+    unsubscribeCO2();
+    unsubscribePower();
+    unsubscribeCost();
+    unsubscribeVehicleCount();
+  };
+}, [activeItem]);
 
   return (
     <div className="flex min-h-screen">
@@ -159,53 +272,66 @@ export default function App() {
       />
       <div className="relative flex-1 transition-all duration-300 min-h-screen p-6 ml-[50px] md:ml-[200px]">
         <main className="pt-0 bg-gray-100 min-h-screen">
-        <header className="fixed top-0 left-0 right-0 bg-green-primary text-white h-14 flex items-center px-4 shadow-lg z-20 justify-between">
-          <div className="flex items-center">
-            <a href="https://undip.ac.id" target="_blank" rel="noopener noreferrer">
-              <img src={`${process.env.PUBLIC_URL}/Logo.png`} alt="Logo" className="h-10 w-auto mr-3" />
-            </a>
-            <h1 className="text-xs sm:text-md md:text-2xl lg:text-2xl font-semibold">
-              UNDIP GREEN MONITORING
-            </h1>
-          </div>
-
-          <div className="flex items-center space-x-2 text-right text-sm leading-tight whitespace-pre">
-            <a href="https://undip.ac.id" target="_blank" rel="noopener noreferrer">
-              <img src={`${process.env.PUBLIC_URL}/logo2.png`} alt="Logo2" className="h-10 w-auto mr-0" />
-            </a>
-            <a href="https://global.undip.ac.id" target="_blank" rel="noopener noreferrer">
-              <img src={`${process.env.PUBLIC_URL}/global.png`} alt="globalLogo" className="h-10 w-22" />
-            </a>
-            <a href="https://sdgs.un.org/goals" target="_blank" rel="noopener noreferrer">
-              <img src={`${process.env.PUBLIC_URL}/sdg.png`} alt="sdgLogo" className="h-9 w-19" />
-            </a>
-            <a href="https://greenmetric.ui.ac.id" target="_blank" rel="noopener noreferrer">
-              <img src={`${process.env.PUBLIC_URL}/ui.png`} alt="greenmetricLogo" className="h-9 w-19" />
-            </a>
-            <div className="font-semibold">{currentDateTime}</div>
-          </div>
-        </header>
-
+          <header className="fixed top-0 left-0 right-0 bg-green-primary text-white h-14 flex items-center px-4 shadow-lg z-20 justify-between">
+            <div className="flex items-center">
+              <a href="https://undip.ac.id" target="_blank" rel="noopener noreferrer">
+                <img src={`${process.env.PUBLIC_URL}/Logo.png`} alt="Logo" className="h-10 w-auto mr-3" />
+              </a>
+              <h1 className="text-xs sm:text-md md:text-2xl lg:text-2xl font-semibold">
+                UNDIP GREEN MONITORING
+              </h1>
+            </div>
+            <div className="flex items-center space-x-2 text-right text-sm leading-tight whitespace-pre">
+              <a href="https://undip.ac.id" target="_blank" rel="noopener noreferrer">
+                <img src={`${process.env.PUBLIC_URL}/logo2.png`} alt="Logo2" className="h-10 w-auto mr-0" />
+              </a>
+              <a href="https://global.undip.ac.id" target="_blank" rel="noopener noreferrer">
+                <img src={`${process.env.PUBLIC_URL}/global.png`} alt="globalLogo" className="h-10 w-22" />
+              </a>
+              <a href="https://sdgs.un.org/goals" target="_blank" rel="noopener noreferrer">
+                <img src={`${process.env.PUBLIC_URL}/sdg.png`} alt="sdgLogo" className="h-9 w-19" />
+              </a>
+              <a href="https://greenmetric.ui.ac.id" target="_blank" rel="noopener noreferrer">
+                <img src={`${process.env.PUBLIC_URL}/ui.png`} alt="greenmetricLogo" className="h-9 w-19" />
+              </a>
+              <div className="font-semibold">{currentDateTime}</div>
+            </div>
+          </header>
 
           <h2 className="text-2xl font-semibold mb-4 mt-10">
             {itemLabels[activeItem]}
           </h2>
 
+          {/* Add content for OVERVIEW tab */}
+          {activeItem === "OVERVIEW" && (
+            <section>
+              <GaugeDisplay
+                leftValues={[powerForGauge, costForGauge]}
+                rightValues={[20, 130, 210, 360]}
+                bottomLeftValues={[70, 190]}
+                secondBarValue={co2ValueForGauge}
+                lcdValues={vehicleCountForLCD}
+              />
+            </section>
+          )}
+
+
           <CardGrid data={cardData} isVehicle={activeItem === "VEHICLE COUNTER"} activeItem={activeItem} />
 
           {activeItem === "ELECTRICITY" && (
             <>
-              <ElectricityCharts
-                chartData={chartData}
-                dailyChartData={dailyChartData}
-              />
+              <ElectricityCharts chartData={chartData} dailyChartData={dailyChartData} />
               <StaticMap position={electricityLocation} label="Sensor Location" />
             </>
           )}
 
+          {activeItem === "CO2" && (
+            <CO2Chart dailyChartData={dailyChartData} />
+          )}
+
           {activeItem === "VEHICLE COUNTER" && (
             <section className="mt-8">
-              <VehicleChartAndVideo chartData={chartData} />
+              <VehicleChartAndVideo chartData={dailyChartData} />
               <StaticMap position={vehicleCounterLocation} label="Sensor Location" />
             </section>
           )}
